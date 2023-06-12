@@ -1,0 +1,87 @@
+#include <iostream>
+#include <list>
+#include <random>
+
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Класс для хеш-таблицы
+class HashTable {
+private:
+    // Массив связанных списков для хранения элементов
+    list<int> table[TABLE_SIZE];
+    // Функция хеширования
+    int hash(int key) {
+        return key % TABLE_SIZE;
+    }
+public:
+    // Вставка элемента в таблицу
+    void insert(int key) {
+        int index = hash(key);
+        table[index].push_back(key);
+    }
+    // Поиск элемента в таблице
+    bool search(int key) {
+        int index = hash(key);
+        for (int x : table[index]) {
+            if (x == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Вывод таблицы на экран
+    void print() {
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            cout << i << ": ";
+            for (int x : table[i]) {
+                cout << x << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main()
+{
+    setlocale(0, "ru");
+    int data[19];
+    // Генератор случайных чисел
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(11000, 53000);
+    // Заполнение массива случайными числами
+    for (int i = 0; i < 19; i++) {
+        data[i] = dis(gen);
+    }
+
+    HashTable table;
+    // Вставка элементов массива в таблицу
+    for (int i = 0; i < 19; i++) {
+        table.insert(data[i]);
+    }
+
+    cout << "Исходный массив:" << endl;
+    for (int i = 0; i < 19; i++) {
+        cout << data[i] << " ";
+    }
+    cout << endl;
+
+    cout << "Хеш-таблица:" << endl;
+    table.print();
+
+    cout << "Введите ключ для поиска: ";
+    int key;
+    cin >> key;
+
+    bool result = table.search(key);
+    if (!result) {
+        cout << "Элемент не найден" << endl;
+    }
+    else {
+        cout << "Элемент найден" << endl;
+    }
+
+    return 0;
+}
