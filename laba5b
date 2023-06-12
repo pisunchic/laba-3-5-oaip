@@ -1,0 +1,95 @@
+#include <iostream>
+#include <string>
+#include <list>
+
+using namespace std;
+
+struct Data {
+    string surname;
+    string phone;
+    string address;
+};
+
+const int TABLE_SIZE = 10;
+
+// Класс для хеш-таблицы
+class HashTable {
+private:
+    // Массив связанных списков для хранения элементов
+    list<Data> table[TABLE_SIZE];
+    // Функция хеширования
+    int hash(string key) {
+        int sum = 0;
+        for (char c : key) {
+            sum += c;
+        }
+        return sum % TABLE_SIZE;
+    }
+public:
+    // Вставка элемента в таблицу
+    void insert(Data data) {
+        int index = hash(data.phone);
+        table[index].push_back(data);
+    }
+    // Поиск элемента в таблице
+    Data* search(string key) {
+        int index = hash(key);
+        for (Data& data : table[index]) {
+            if (data.phone == key) {
+                return &data;
+            }
+        }
+        return nullptr;
+    }
+    // Вывод таблицы на экран
+    void print() {
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            cout << i << ": ";
+            for (Data data : table[i]) {
+                cout << data.surname << " " << data.phone << " " << data.address << "; ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    Data data[9];
+    for (int i = 0; i < 9; i++) {
+        cout << "Введите фамилию: ";
+        getline(cin, data[i].surname);
+        cout << "Введите номер телефона: ";
+        getline(cin, data[i].phone);
+        cout << "Введите адрес: ";
+        getline(cin, data[i].address);
+    }
+
+    HashTable table;
+    // Вставка элементов массива в таблицу
+    for (int i = 0; i < 9; i++) {
+        table.insert(data[i]);
+    }
+
+    cout << "Исходный массив:" << endl;
+    for (int i = 0; i < 9; i++) {
+        cout << data[i].surname << " " << data[i].phone << " " << data[i].address << endl;
+    }
+
+    cout << "Хеш-таблица:" << endl;
+    table.print();
+
+    cout << "Введите ключ для поиска: ";
+    string key;
+    getline(cin, key);
+
+    Data* result = table.search(key);
+    if (result == nullptr) {
+        cout << "Элемент не найден" << endl;
+    }
+    else {
+        cout << "Найденный элемент: " << result->surname << " " << result->phone << " " << result->address << endl;
+    }
+
+    return 0;
+}
